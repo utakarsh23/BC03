@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
@@ -8,7 +8,7 @@ import FloatingActionButton from '@/components/FloatingActionButton';
 import { mockCompanies, sectors, stages, locations } from '@/data/mockCompanies';
 import { Company } from '@/types';
 
-export default function CompaniesPage() {
+function CompaniesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
@@ -449,5 +449,17 @@ export default function CompaniesPage() {
         ]}
       />
     </div>
+  );
+}
+
+export default function CompaniesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
+      </div>
+    }>
+      <CompaniesContent />
+    </Suspense>
   );
 }
