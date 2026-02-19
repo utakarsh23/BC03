@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import BookmarkPopup from '@/components/BookmarkPopup';
 import NotesModal from '@/components/NotesModal';
@@ -80,6 +81,8 @@ export default function CompanyProfilePage({ params }: { params: { id: string } 
     setIsEnriching(true);
     setEnrichError('');
 
+    const enrichmentToastId = toast.loading(`Enriching ${company.name}...`);
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/enrich`, {
         method: 'POST',
@@ -87,15 +90,66 @@ export default function CompanyProfilePage({ params }: { params: { id: string } 
         body: JSON.stringify({ website: company.website }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`Enrichment failed: ${response.statusText}`);
+        // Handle different error types
+        let errorMessage = 'Unable to enrich company data';
+        
+        if (response.status === 429 || data.error?.includes('quota') || data.error?.includes('limit')) {
+          errorMessage = 'Gemini API limit exceeded. Please try again later.';
+        } else if (data.error?.includes('fetch') || data.error?.includes('Failed to fetch')) {
+          errorMessage = 'The website seems unreachable. Please check the URL or try again later.';
+        } else if (data.error?.includes('parse') || data.error?.includes('JSON')) {
+          errorMessage = 'Unable to parse website content. The website might be blocking automated access.';
+        } else if (data.error) {
+          errorMessage = data.error;
+        }
+        
+        toast.error(errorMessage, { id: enrichmentToastId, duration: 5000 });
+        setEnrichError(errorMessage);
+        return;
       }
 
-      const data = await response.json();
       setEnrichmentData(data);
       localStorage.setItem(`enrichment-${company.id}`, JSON.stringify(data));
+      
+      // Show success toast with clickable link
+      toast.success(
+        (t) => (
+          <div 
+            onClick={() => {
+              toast.dismiss(t.id);
+              // Navigate to company profile if not already there
+              router.push(`/companies/${company.id}`);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="cursor-pointer hover:opacity-80 transition-opacity"
+          >
+            <div className="font-medium">✨ Enrichment completed!</div>
+            <div className="text-sm opacity-90 mt-1">
+              {company.name} • Click to view
+            </div>
+          </div>
+        ),
+        { 
+          id: enrichmentToastId,
+          duration: 6000,
+        }
+      );
     } catch (error) {
-      setEnrichError(error instanceof Error ? error.message : 'Enrichment failed');
+      let errorMessage = 'Network error. Please check your connection and try again.';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('fetch')) {
+          errorMessage = 'Unable to connect to the enrichment service. Please try again later.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      toast.error(errorMessage, { id: enrichmentToastId, duration: 5000 });
+      setEnrichError(errorMessage);
     } finally {
       setIsEnriching(false);
     }

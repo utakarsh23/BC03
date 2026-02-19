@@ -56,7 +56,28 @@ Return ONLY valid JSON, no additional text.`;
       signals: Array.isArray(parsed.signals) ? parsed.signals : [],
     };
   } catch (error) {
-    console.log('Gemini AI unavailable, using mock enrichment data');
+    // Check for specific API errors
+    if (error instanceof Error) {
+      const errorMessage = error.message.toLowerCase();
+      
+      // API quota or rate limit errors
+      if (errorMessage.includes('quota') || errorMessage.includes('rate limit') || errorMessage.includes('429')) {
+        throw new Error('API quota exceeded. Please try again later.');
+      }
+      
+      // Authentication errors
+      if (errorMessage.includes('api key') || errorMessage.includes('authentication')) {
+        throw new Error('API authentication failed.');
+      }
+      
+      // Network errors
+      if (errorMessage.includes('network') || errorMessage.includes('fetch failed')) {
+        throw new Error('Network error connecting to AI service.');
+      }
+    }
+    
+    console.log('Gemini AI error:', error);
+    console.log('Using fallback enrichment data');
     
     // Mock enrichment - analyze the text to provide realistic data
     const textLower = websiteText.toLowerCase();

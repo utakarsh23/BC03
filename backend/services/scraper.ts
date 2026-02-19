@@ -7,7 +7,7 @@ export async function fetchWebsiteContent(url: string): Promise<string> {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; VCDiscovery/1.0)',
       },
-      timeout: 10000,
+      timeout: 15000,
     });
 
     if (!response.ok) {

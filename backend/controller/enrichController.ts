@@ -40,9 +40,36 @@ async function enrichWebsite(req: Request, res: Response) {
     res.json(enrichmentData);
   } catch (error) {
     console.error('Enrichment error:', error);
-    res.status(500).json({
-      error: error instanceof Error ? error.message : 'Enrichment failed',
-    });
+    
+    // Provide more specific error messages
+    let errorMessage = 'Enrichment failed';
+    let statusCode = 500;
+    
+    if (error instanceof Error) {
+      const errorString = error.message.toLowerCase();
+      
+      // Rate limit / quota errors
+      if (errorString.includes('quota') || errorString.includes('rate limit') || errorString.includes('429')) {
+        errorMessage = 'API quota exceeded. Please try again later.';
+        statusCode = 429;
+      } 
+      // Network/fetch errors
+      else if (errorString.includes('fetch') || errorString.includes('enotfound') || errorString.includes('timeout')) {
+        errorMessage = 'Failed to fetch website content. The website may be unreachable.';
+        statusCode = 502;
+      }
+      // Parsing errors
+      else if (errorString.includes('parse') || errorString.includes('json')) {
+        errorMessage = 'Failed to parse website content.';
+        statusCode = 422;
+      }
+      // Generic error
+      else {
+        errorMessage = error.message;
+      }
+    }
+    
+    res.status(statusCode).json({ error: errorMessage });
   }
 }
 
