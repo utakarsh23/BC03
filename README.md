@@ -2,6 +2,8 @@
 
 A modern, full-stack VC intelligence platform with live company enrichment powered by AI. Built with Next.js 14, TypeScript, and Google Gemini AI.
 
+🚀 **Live Demo**: [https://bc-03.vercel.app/](https://bc-03.vercel.app/)
+
 ## ✨ Key Features
 
 ### 🏢 Companies Directory
