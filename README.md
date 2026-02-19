@@ -4,6 +4,40 @@ A modern, full-stack VC intelligence platform with live company enrichment power
 
 🚀 **Live Demo**: [https://bc-03.vercel.app/](https://bc-03.vercel.app/)
 
+## 📸 Screenshots & Demo
+
+### 🎥 Platform Demo
+https://github.com/user-attachments/assets/test_recording.mov
+
+### 🖼️ Feature Showcase
+
+#### AI-Powered Enrichment
+![Enriched Company Data](media/enrichedResponse.png)
+*Live AI enrichment with company summaries, keywords, and signals*
+
+#### Smart Search with History
+![Search with Suggestions](media/searchState.png)
+*Intelligent search with last 25 search history suggestions*
+
+#### List Management
+![List View](media/listView.png)
+*Organize companies into custom lists*
+
+![List Modal View](media/listView2.png)
+*Detailed list view with company management*
+
+#### Quick Actions
+![Upload/Download Options](media/UploadDownloadOptions.png)
+*Floating action buttons for rapid file operations*
+
+#### Save to Lists
+![Add to List](media/listAddition.png)
+*Instagram-style bookmark modal for saving companies*
+
+#### Multi-Note System
+![Notes Addition](media/notesAddition.png)
+*Add unlimited timestamped notes per company*
+
 ## ✨ Key Features
 
 ### 🏢 Companies Directory
