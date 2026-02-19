@@ -44,7 +44,7 @@ temp/
 coverage/
 
 # Optional lock files (uncomment if needed)
-package-lock.json
+# package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
 
