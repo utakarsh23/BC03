@@ -12,7 +12,7 @@ const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
     const [query, setQuery] = useState('');
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [searchHistory, setSearchHistory] = useState<string[]>([]);
-    const searchRef = useRef<HTMLDivElement>(null);
+    const searchRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     // Load search history from localStorage
